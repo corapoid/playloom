@@ -1,0 +1,32 @@
+/* Neutral glass skin. Enable with playerConfig.skin: "default". */
+.podcast-shell[data-skin="default"]{
+  display:grid;
+  gap:18px;
+  overflow:visible;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.podcast-shell[data-skin="default"] .now-playing,
+.podcast-shell[data-skin="default"][data-media-mode="video"] .engine-wrap,
+.podcast-shell[data-skin="default"] .episode-list{
+  overflow:hidden;
+  border:1px solid var(--shell-border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);
+}
+.podcast-shell[data-skin="default"] .now-playing{background:var(--panel)}
+.podcast-shell[data-skin="default"] .episode-list{
+  border-top:1px solid var(--shell-border);
+  background:var(--list-bg);
+}
+.podcast-shell[data-skin="default"][data-media-mode="audio"] .engine-wrap{display:none}
+
+@media (max-width:620px){
+  .podcast-shell[data-skin="default"] .now-playing,
+  .podcast-shell[data-skin="default"][data-media-mode="video"] .engine-wrap,
+  .podcast-shell[data-skin="default"] .episode-list{border-radius:20px}
+}

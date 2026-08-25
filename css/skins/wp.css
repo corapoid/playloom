@@ -1,0 +1,48 @@
+/* WP-inspired editorial skin. Enable with playerConfig.skin: "wp". */
+.podcast-shell[data-skin="wp"]{
+  --panel:#fff;
+  --panel-solid:#fff;
+  --text:#0e0c18;
+  --muted:#636880;
+  --line:#e3e3e6;
+  --soft:#f2f2f2;
+  --accent:#c00;
+  --accent-contrast:#fff;
+  --list-bg:#fff;
+  --focus-ring:rgba(204,0,0,.22);
+  --radius-xl:8px;
+  --radius-lg:8px;
+  --radius-md:8px;
+  --shadow:none;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--panel);
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.podcast-shell[data-skin="wp"] .cover,
+.podcast-shell[data-skin="wp"] .episode-thumbnail{border-radius:8px;box-shadow:none}
+.podcast-shell[data-skin="wp"] .episode-title{font-family:"Arial Narrow",Arial,sans-serif;font-weight:800;letter-spacing:-.035em}
+.podcast-shell[data-skin="wp"] .play-btn{background:var(--accent);color:#fff;box-shadow:none}
+.podcast-shell[data-skin="wp"] .play-btn:hover{background:#a90000}
+.podcast-shell[data-skin="wp"] .simple-progress-fill,
+.podcast-shell[data-skin="wp"] .bar,
+.podcast-shell[data-skin="wp"] .playhead{background:var(--accent)}
+.podcast-shell[data-skin="wp"] .episode-list{border-top:1px solid var(--line);background:var(--list-bg)}
+.podcast-shell[data-skin="wp"] .episode-row{border-radius:8px}
+.podcast-shell[data-skin="wp"] .episode-row:hover{background:#fdf1f1}
+.podcast-shell[data-skin="wp"] .episode-row.active{background:#fdf1f1;box-shadow:inset 4px 0 var(--accent)}
+.podcast-shell[data-skin="wp"] .now-badge,
+.podcast-shell[data-skin="wp"] .episode-load-more button{background:var(--accent);color:#fff}
+.podcast-shell[data-skin="wp"] .media-switch button[aria-pressed="true"]{background:var(--accent);color:#fff}
+
+:root[data-preview-theme="dark"] .podcast-shell[data-skin="wp"]{
+  --panel:#0e0c18;--panel-solid:#1b1925;--text:#fff;--muted:#a5a7b3;--line:#343342;--soft:#252330;
+  --accent:#a90607;--list-bg:#15131e;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-preview-theme]) .podcast-shell[data-skin="wp"]{
+    --panel:#0e0c18;--panel-solid:#1b1925;--text:#fff;--muted:#a5a7b3;--line:#343342;--soft:#252330;
+    --accent:#a90607;--list-bg:#15131e;
+  }
+}

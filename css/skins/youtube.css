@@ -1,0 +1,53 @@
+/* YouTube-inspired flat media skin. Enable with playerConfig.skin: "youtube". */
+.podcast-shell[data-skin="youtube"]{
+  --panel:#fff;
+  --panel-solid:#fff;
+  --text:#0f0f0f;
+  --muted:#606060;
+  --line:#dedede;
+  --soft:#f2f2f2;
+  --accent:#f00;
+  --accent-contrast:#fff;
+  --description:#606060;
+  --progress-track:#d9d9d9;
+  --list-bg:#fff;
+  --focus-ring:rgba(6,95,212,.24);
+  --radius-xl:12px;
+  --radius-lg:12px;
+  --radius-md:10px;
+  --shadow:none;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--panel);
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.podcast-shell[data-skin="youtube"] .cover{border-radius:12px;box-shadow:none}
+.podcast-shell[data-skin="youtube"] .episode-title,
+.podcast-shell[data-skin="youtube"] button,
+.podcast-shell[data-skin="youtube"] input{font-family:Roboto,Arial,sans-serif}
+.podcast-shell[data-skin="youtube"] .play-btn{background:var(--accent);color:#fff;box-shadow:none}
+.podcast-shell[data-skin="youtube"] .play-btn:hover{background:#d90000}
+.podcast-shell[data-skin="youtube"] .simple-progress-fill,
+.podcast-shell[data-skin="youtube"] .wave-played .bar,
+.podcast-shell[data-skin="youtube"] .playhead{background:var(--accent)}
+.podcast-shell[data-skin="youtube"] .episode-list{border-top:1px solid var(--line);background:var(--list-bg)}
+.podcast-shell[data-skin="youtube"] .episode-row{border-radius:10px}
+.podcast-shell[data-skin="youtube"] .episode-row:hover,
+.podcast-shell[data-skin="youtube"] .episode-row.active{background:var(--soft)}
+.podcast-shell[data-skin="youtube"] .episode-row.active{box-shadow:inset 3px 0 var(--accent)}
+.podcast-shell[data-skin="youtube"] .episode-thumbnail{border-radius:8px}
+.podcast-shell[data-skin="youtube"] .now-badge{background:var(--accent);color:#fff}
+.podcast-shell[data-skin="youtube"] .episode-load-more button{background:var(--soft);font-weight:700}
+.podcast-shell[data-skin="youtube"] .media-switch button[aria-pressed="true"]{background:var(--text);color:var(--panel)}
+
+:root[data-preview-theme="dark"] .podcast-shell[data-skin="youtube"]{
+  --panel:#0f0f0f;--panel-solid:#212121;--text:#f1f1f1;--muted:#aaa;--line:#303030;--soft:#272727;
+  --description:#aaa;--progress-track:#4a4a4a;--list-bg:#0f0f0f;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-preview-theme]) .podcast-shell[data-skin="youtube"]{
+    --panel:#0f0f0f;--panel-solid:#212121;--text:#f1f1f1;--muted:#aaa;--line:#303030;--soft:#272727;
+    --description:#aaa;--progress-track:#4a4a4a;--list-bg:#0f0f0f;
+  }
+}

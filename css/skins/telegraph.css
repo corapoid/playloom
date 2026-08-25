@@ -1,0 +1,50 @@
+/* Telegraph-inspired editorial skin. Enable with playerConfig.skin: "telegraph". */
+.podcast-shell[data-skin="telegraph"]{
+  --panel:#fff;
+  --panel-solid:#fff;
+  --text:#222;
+  --muted:#767676;
+  --line:#b5b5b5;
+  --soft:#f8f8f8;
+  --accent:#de0000;
+  --accent-contrast:#fff;
+  --description:#494949;
+  --progress-track:#d7d7d7;
+  --list-bg:#fff;
+  --focus-ring:rgba(222,0,0,.2);
+  --radius-xl:4px;
+  --radius-lg:4px;
+  --radius-md:4px;
+  --shadow:none;
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:var(--panel);
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.podcast-shell[data-skin="telegraph"] .episode-title,
+.podcast-shell[data-skin="telegraph"] .row-title{font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:-.025em}
+.podcast-shell[data-skin="telegraph"] .cover,
+.podcast-shell[data-skin="telegraph"] .episode-thumbnail{border-radius:2px;box-shadow:none}
+.podcast-shell[data-skin="telegraph"] .play-btn{background:#222;color:#fff;box-shadow:none}
+.podcast-shell[data-skin="telegraph"] .play-btn:hover{background:#000}
+.podcast-shell[data-skin="telegraph"] .episode-list{border-top:1px solid #222;background:var(--list-bg)}
+.podcast-shell[data-skin="telegraph"] .episode-row{border-radius:0;border-bottom:1px solid #ddd}
+.podcast-shell[data-skin="telegraph"] .episode-row:last-child{border-bottom:0}
+.podcast-shell[data-skin="telegraph"] .episode-row:hover{background:var(--soft)}
+.podcast-shell[data-skin="telegraph"] .episode-row.active{background:var(--soft);box-shadow:inset 3px 0 var(--accent)}
+.podcast-shell[data-skin="telegraph"] .episode-row.active .episode-index::after{display:none}
+.podcast-shell[data-skin="telegraph"] .now-badge{border-radius:2px;background:var(--accent);color:#fff}
+.podcast-shell[data-skin="telegraph"] .episode-load-more button{background:#222;color:#fff}
+.podcast-shell[data-skin="telegraph"] .media-switch button[aria-pressed="true"]{background:#222;color:#fff}
+
+:root[data-preview-theme="dark"] .podcast-shell[data-skin="telegraph"]{
+  --panel:#202326;--panel-solid:#292d30;--text:#f3f1ec;--muted:#a7a7a7;--line:#484b4d;--soft:#2b2f32;
+  --accent:#ff5a5a;--description:#c2c0bc;--progress-track:#505457;--list-bg:#202326;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-preview-theme]) .podcast-shell[data-skin="telegraph"]{
+    --panel:#202326;--panel-solid:#292d30;--text:#f3f1ec;--muted:#a7a7a7;--line:#484b4d;--soft:#2b2f32;
+    --accent:#ff5a5a;--description:#c2c0bc;--progress-track:#505457;--list-bg:#202326;
+  }
+}

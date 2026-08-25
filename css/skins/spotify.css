@@ -1,0 +1,47 @@
+/* Spotify-inspired dark skin. Enable with playerConfig.skin: "spotify". */
+.podcast-shell[data-skin="spotify"]{
+  --panel:#121212;
+  --panel-solid:#242424;
+  --text:#fff;
+  --muted:#b3b3b3;
+  --line:#2b2b2b;
+  --soft:#2a2a2a;
+  --accent:#1ed760;
+  --accent-contrast:#000;
+  --accent-hover:#3be477;
+  --description:#b3b3b3;
+  --progress-track:#4d4d4d;
+  --list-bg:#181818;
+  --focus-ring:rgba(255,255,255,.5);
+  --shell-border:transparent;
+  --radius-xl:8px;
+  --radius-lg:8px;
+  --radius-md:8px;
+  --shadow:none;
+  border:0;
+  border-radius:8px;
+  background:var(--panel);
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.podcast-shell[data-skin="spotify"] .cover{border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.42)}
+.podcast-shell[data-skin="spotify"] .episode-title{font-weight:800;letter-spacing:-.04em}
+.podcast-shell[data-skin="spotify"] .play-btn{background:var(--accent);color:#000;box-shadow:none}
+.podcast-shell[data-skin="spotify"] .play-btn:hover{background:var(--accent-hover);transform:scale(1.04)}
+.podcast-shell[data-skin="spotify"] .simple-progress-fill,
+.podcast-shell[data-skin="spotify"] .wave-played .bar,
+.podcast-shell[data-skin="spotify"] .playhead{background:var(--accent)}
+.podcast-shell[data-skin="spotify"] .wave-base .bar{background:#727272}
+.podcast-shell[data-skin="spotify"] .episode-list{border-top:1px solid var(--line);background:var(--list-bg)}
+.podcast-shell[data-skin="spotify"] .episode-row{border-radius:6px}
+.podcast-shell[data-skin="spotify"] .episode-row:hover,
+.podcast-shell[data-skin="spotify"] .episode-row.active{background:#2a2a2a}
+.podcast-shell[data-skin="spotify"] .episode-row.active .row-title{color:var(--accent)}
+.podcast-shell[data-skin="spotify"] .episode-row.active .episode-index::after,
+.podcast-shell[data-skin="spotify"] .now-badge{background:var(--accent);color:#000}
+.podcast-shell[data-skin="spotify"] .episode-thumbnail{border-radius:4px}
+.podcast-shell[data-skin="spotify"] .episode-load-more button{background:#fff;color:#000;font-weight:800}
+.podcast-shell[data-skin="spotify"] .episode-load-more button:hover{transform:scale(1.03)}
+.podcast-shell[data-skin="spotify"] .speed-menu{border:0;background:#282828;box-shadow:0 16px 36px rgba(0,0,0,.45)}
+.podcast-shell[data-skin="spotify"] .media-switch{background:#242424}
+.podcast-shell[data-skin="spotify"] .media-switch button[aria-pressed="true"]{background:#fff;color:#000}

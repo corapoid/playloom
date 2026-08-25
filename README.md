@@ -39,12 +39,13 @@ To release a new version, update `CHANGELOG.md`, commit the changes, create a ta
 
 ## Configuration
 
-Set `window.podcastPlayerConfig` before loading `js/podcast-player-videojs.js`:
+Set `window.podcastPlayerConfig` before loading `js/podcast-player-videojs.js`. Load `js/i18n.js` first when using the player outside the included HTML pages:
 
 ```html
 <script>
   window.podcastPlayerConfig = {
     skin: "default",
+    language: "pl",
     mode: "audio",
     allowModeSwitch: true,
     showEpisodeList: true,
@@ -56,6 +57,7 @@ Set `window.podcastPlayerConfig` before loading `js/podcast-player-videojs.js`:
     alwaysShowWaveform: true
   };
 </script>
+<script src="js/i18n.js"></script>
 <script src="js/podcast-player-videojs.js"></script>
 ```
 
@@ -70,6 +72,7 @@ With `showEpisodeLoadMore: true`, the list initially displays four episodes and 
 │   ├── podcast-player-videojs.css
 │   └── skins/
 ├── js/
+│   ├── i18n.js
 │   ├── podcast-player-configurator.js
 │   ├── podcast-player-preview.js
 │   └── podcast-player-videojs.js

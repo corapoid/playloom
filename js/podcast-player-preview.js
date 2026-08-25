@@ -1,6 +1,7 @@
 (() => {
   const params = new URLSearchParams(location.search);
-  const config = {};
+  const language = window.podcastPlayerI18n.normalize(params.get("language"));
+  const config = { language };
   const booleans = [
     "minimal",
     "showWaveform",
@@ -24,6 +25,7 @@
   window.podcastPlayerConfig = config;
 
   addEventListener("DOMContentLoaded", () => {
+    window.podcastPlayerI18n.apply(document, language);
     const page = document.querySelector(".page");
     const reportHeight = () => parent.postMessage({
       type: "podcast-preview-height",

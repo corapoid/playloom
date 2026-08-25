@@ -24,6 +24,7 @@ jobs:
 
       - name: Validate JavaScript
         run: |
+          node --check js/i18n.js
           node --check js/podcast-player-videojs.js
           node --check js/podcast-player-configurator.js
           node --check js/podcast-player-preview.js

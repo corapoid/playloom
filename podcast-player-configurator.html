@@ -3,24 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Konfigurator Podcast Playera</title>
+  <title data-i18n="config.pageTitle">Konfigurator Podcast Playera</title>
   <link rel="stylesheet" href="css/podcast-player-configurator.css">
+  <script src="js/i18n.js"></script>
   <script src="js/podcast-player-configurator.js" defer></script>
 </head>
 <body>
   <main class="config-layout">
     <section class="preview-section" aria-labelledby="previewTitle">
-      <h2 class="visually-hidden" id="previewTitle">Podgląd Podcast Playera</h2>
+      <h2 class="visually-hidden" id="previewTitle" data-i18n="config.previewTitle">Podgląd Podcast Playera</h2>
       <div class="preview-views">
         <section class="desktop-preview" aria-labelledby="desktopPreviewTitle">
-          <h3 class="device-preview-label" id="desktopPreviewTitle">Desktop</h3>
+          <h3 class="device-preview-label" id="desktopPreviewTitle" data-i18n="config.desktop">Desktop</h3>
           <div class="preview-viewport">
-            <iframe id="previewFrame" title="Desktopowy podgląd skonfigurowanego podcast playera"></iframe>
+            <iframe id="previewFrame" data-i18n-title="config.desktopPreview" title="Desktopowy podgląd skonfigurowanego podcast playera"></iframe>
           </div>
         </section>
 
         <section class="mobile-preview" aria-labelledby="mobilePreviewTitle">
-          <h3 class="device-preview-label" id="mobilePreviewTitle">iPhone · 390 × 844</h3>
+          <h3 class="device-preview-label" id="mobilePreviewTitle" data-i18n="config.mobile">iPhone · 390 × 844</h3>
           <div class="ios-device">
             <span class="ios-button ios-button-action" aria-hidden="true"></span>
             <span class="ios-button ios-button-volume-up" aria-hidden="true"></span>
@@ -28,7 +29,7 @@
             <span class="ios-button ios-button-power" aria-hidden="true"></span>
             <div class="ios-screen">
               <span class="dynamic-island" aria-hidden="true"></span>
-              <iframe id="mobilePreviewFrame" title="Mobilny podgląd skonfigurowanego podcast playera"></iframe>
+              <iframe id="mobilePreviewFrame" data-i18n-title="config.mobilePreview" title="Mobilny podgląd skonfigurowanego podcast playera"></iframe>
               <span class="home-indicator" aria-hidden="true"></span>
             </div>
           </div>
@@ -39,40 +40,40 @@
     <header class="config-header">
       <div>
         <p class="config-kicker">Podcast Player</p>
-        <h1>Konfigurator wyglądu</h1>
+        <h1 data-i18n="config.heading">Konfigurator wyglądu</h1>
       </div>
-      <p class="config-intro">Ustaw wygląd, skopiuj config albo udostępnij bieżący URL.</p>
+      <p class="config-intro" data-i18n="config.intro">Ustaw wygląd, skopiuj config albo udostępnij bieżący URL.</p>
     </header>
 
     <details class="settings-panel" open>
       <summary class="settings-heading">
         <div>
-          <p>Opcje wyglądu</p>
-          <h2 id="settingsTitle">Konfigurator</h2>
+          <p data-i18n="config.appearanceOptions">Opcje wyglądu</p>
+          <h2 id="settingsTitle" data-i18n="config.configurator">Konfigurator</h2>
         </div>
       </summary>
 
       <div class="settings-toolbar">
-        <p>Zmiany są od razu zapisywane w URL i widoczne w podglądzie.</p>
-        <button class="text-button" id="resetBtn" type="button">Resetuj ustawienia</button>
+        <p data-i18n="config.changes">Zmiany są od razu zapisywane w URL i widoczne w podglądzie.</p>
+        <button class="text-button" id="resetBtn" type="button" data-i18n="config.reset">Resetuj ustawienia</button>
       </div>
 
       <form id="settingsForm" aria-labelledby="settingsTitle">
         <fieldset>
-          <legend>Układ</legend>
+          <legend data-i18n="config.layout">Układ</legend>
 
           <label class="select-field">
-            <span>Wariant</span>
+            <span data-i18n="config.variant">Wariant</span>
             <select name="layout">
-              <option value="default">Domyślny</option>
-              <option value="hero">Hero 16:9</option>
+              <option value="default" data-i18n="config.defaultLayout">Domyślny</option>
+              <option value="hero" data-i18n="config.heroLayout">Hero 16:9</option>
             </select>
           </label>
 
           <label class="select-field">
-            <span>Skórka</span>
+            <span data-i18n="config.skin">Skórka</span>
             <select name="skin">
-              <option value="default">Default</option>
+              <option value="default" data-i18n="config.defaultSkin">Default</option>
               <option value="onet">Onet</option>
               <option value="wp">WP</option>
               <option value="spotify">Spotify</option>
@@ -82,60 +83,68 @@
           </label>
 
           <label class="select-field">
-            <span>Motyw podglądu</span>
+            <span data-i18n="config.previewTheme">Motyw podglądu</span>
             <select name="theme">
-              <option value="system">Systemowy</option>
-              <option value="light">Jasny</option>
-              <option value="dark">Ciemny</option>
+              <option value="system" data-i18n="config.systemTheme">Systemowy</option>
+              <option value="light" data-i18n="config.lightTheme">Jasny</option>
+              <option value="dark" data-i18n="config.darkTheme">Ciemny</option>
             </select>
-            <small>Motyw nie trafia do configu playera.</small>
+            <small data-i18n="config.themeHint">Motyw nie trafia do configu playera.</small>
+          </label>
+
+          <label class="select-field">
+            <span data-i18n="config.language">Język</span>
+            <select name="language">
+              <option value="pl" data-i18n="languages.pl">Polski</option>
+              <option value="en" data-i18n="languages.en">English</option>
+            </select>
           </label>
 
           <label class="toggle-field">
-            <span><strong>Tryb minimalny</strong><small>Kompaktowy player bez dodatkowych elementów.</small></span>
+            <span><strong data-i18n="config.minimal">Tryb minimalny</strong><small data-i18n="config.minimalHint">Kompaktowy player bez dodatkowych elementów.</small></span>
             <input type="checkbox" name="minimal">
           </label>
         </fieldset>
 
         <fieldset>
-          <legend>Zawartość</legend>
+          <legend data-i18n="config.content">Zawartość</legend>
 
           <label class="toggle-field">
-            <span><strong>Opis odcinka</strong><small>Pokazuje opis pod metadanymi.</small></span>
+            <span><strong data-i18n="config.episodeDescription">Opis odcinka</strong><small data-i18n="config.episodeDescriptionHint">Pokazuje opis pod metadanymi.</small></span>
             <input type="checkbox" name="showDescriptions">
           </label>
 
           <label class="toggle-field">
-            <span><strong>Lista odcinków</strong><small>Wyświetla playlistę pod playerem.</small></span>
+            <span><strong data-i18n="config.episodeList">Lista odcinków</strong><small data-i18n="config.episodeListHint">Wyświetla playlistę pod playerem.</small></span>
             <input type="checkbox" name="showEpisodeList">
           </label>
 
           <label class="toggle-field dependent-list">
-            <span><strong>Doczytywanie odcinków</strong><small>Pokazuje 4 odcinki i przycisk „Zobacz więcej”.</small></span>
+            <span><strong data-i18n="config.loadMore">Doczytywanie odcinków</strong><small data-i18n="config.loadMoreHint">Pokazuje 4 odcinki i przycisk „Zobacz więcej”.</small></span>
             <input type="checkbox" name="showEpisodeLoadMore">
           </label>
 
           <label class="toggle-field dependent-list">
-            <span><strong>Miniatury</strong><small>Okładki na liście odcinków.</small></span>
+            <span><strong data-i18n="config.thumbnails">Miniatury</strong><small data-i18n="config.thumbnailsHint">Okładki na liście odcinków.</small></span>
             <input type="checkbox" name="showPlaylistThumbnails">
           </label>
 
           <label class="toggle-field dependent-list">
-            <span><strong>Kompaktowa lista</strong><small>Mniejsze odstępy między odcinkami.</small></span>
+            <span><strong data-i18n="config.compactList">Kompaktowa lista</strong><small data-i18n="config.compactListHint">Mniejsze odstępy między odcinkami.</small></span>
             <input type="checkbox" name="compactPlaylist">
           </label>
         </fieldset>
 
         <fieldset>
-          <legend>Linia czasu</legend>
+          <legend data-i18n="config.timeline">Linia czasu</legend>
 
           <label class="toggle-field">
-            <span><strong>Waveform</strong><small>Fala dźwiękowa zamiast prostego paska.</small></span>
+            <span><strong data-i18n="config.waveform">Waveform</strong><small data-i18n="config.waveformHint">Fala dźwiękowa zamiast prostego paska.</small></span>
             <input type="checkbox" name="showWaveform">
           </label>
 
           <label class="toggle-field dependent-waveform">
-            <span><strong>Zawsze widoczny</strong><small>Nie wymaga hovera nad linią czasu.</small></span>
+            <span><strong data-i18n="config.alwaysVisible">Zawsze widoczny</strong><small data-i18n="config.alwaysVisibleHint">Nie wymaga hovera nad linią czasu.</small></span>
             <input type="checkbox" name="alwaysShowWaveform">
           </label>
         </fieldset>
@@ -145,24 +154,24 @@
     <details class="output-card">
       <summary class="output-heading">
         <div>
-          <p>Gotowe do użycia</p>
-          <h2 id="configTitle">Config playera</h2>
+          <p data-i18n="config.readyToUse">Gotowe do użycia</p>
+          <h2 id="configTitle" data-i18n="config.playerConfig">Config playera</h2>
         </div>
       </summary>
       <div class="output-content" aria-labelledby="configTitle">
-        <button class="primary-button" id="copyConfigBtn" type="button">Kopiuj config</button>
+        <button class="primary-button" id="copyConfigBtn" type="button" data-i18n="config.copyConfig">Kopiuj config</button>
         <pre><code id="configOutput"></code></pre>
       </div>
     </details>
 
     <section class="share-card" aria-labelledby="shareTitle">
       <div>
-        <p>Link zachowuje wszystkie ustawienia konfiguratora.</p>
-        <h2 id="shareTitle">Udostępnij konfigurację</h2>
+        <p data-i18n="config.shareHint">Link zachowuje wszystkie ustawienia konfiguratora.</p>
+        <h2 id="shareTitle" data-i18n="config.shareConfig">Udostępnij konfigurację</h2>
       </div>
       <div class="share-row">
-        <input id="shareUrl" type="text" readonly aria-label="URL konfiguracji">
-        <button class="secondary-button" id="copyUrlBtn" type="button">Kopiuj URL</button>
+        <input id="shareUrl" type="text" readonly data-i18n-aria-label="config.configUrl" aria-label="URL konfiguracji">
+        <button class="secondary-button" id="copyUrlBtn" type="button" data-i18n="config.copyUrl">Kopiuj URL</button>
       </div>
     </section>
   </main>

@@ -518,7 +518,7 @@
     }
     .wave-wrap[data-wave-state="error"]:hover::after,
     .wave-wrap[data-wave-state="error"]:focus-visible::after{
-      content:"Waveform niedostępny dla tego źródła";
+       content:var(--waveform-error-message, "Waveform unavailable for this source");
       opacity:1;
     }
 

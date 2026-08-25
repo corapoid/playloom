@@ -3,6 +3,7 @@
     layout: "default",
     skin: "default",
     theme: "system",
+    language: "pl",
     minimal: false,
     showDescriptions: false,
     showEpisodeList: true,
@@ -27,6 +28,7 @@
     if (["default", "hero"].includes(params.get("layout"))) values.layout = params.get("layout");
     if (["default", "onet", "wp", "spotify", "youtube", "telegraph"].includes(params.get("skin"))) values.skin = params.get("skin");
     if (["system", "light", "dark"].includes(params.get("theme"))) values.theme = params.get("theme");
+    values.language = window.podcastPlayerI18n.normalize(params.get("language"));
     booleanKeys.forEach(key => {
       if (params.has(key)) values[key] = params.get(key) === "true";
     });
@@ -65,6 +67,8 @@
 
   function render() {
     const values = readForm();
+    values.language = window.podcastPlayerI18n.normalize(values.language);
+    window.podcastPlayerI18n.apply(document, values.language);
     const params = toParams(values);
     const config = Object.fromEntries(Object.entries(values).filter(([key]) => key !== "theme"));
     const query = params.toString();
@@ -101,10 +105,10 @@
     render();
   });
   document.getElementById("copyConfigBtn").addEventListener("click", () => {
-    copy(output.textContent, "Config skopiowany").catch(() => {});
+    copy(output.textContent, window.podcastPlayerI18n.translate("config.configCopied")).catch(() => {});
   });
   document.getElementById("copyUrlBtn").addEventListener("click", () => {
-    copy(shareUrl.value, "URL skopiowany").catch(() => {});
+    copy(shareUrl.value, window.podcastPlayerI18n.translate("config.urlCopied")).catch(() => {});
   });
   addEventListener("message", event => {
     const target = [frame, mobileFrame].find(item => event.source === item.contentWindow);

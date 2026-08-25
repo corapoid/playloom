@@ -1,4 +1,6 @@
+    const queryLanguage = new URLSearchParams(location.search).get("language");
     const playerConfig = {
+      language: queryLanguage || "pl",
       showDescriptions: false,
       showEpisodeList: true,
       showEpisodeLoadMore: true,
@@ -19,6 +21,10 @@
       playbackSpeeds: [1, 1.25, 1.5, 1.75, 2],
       ...(window.podcastPlayerConfig || {})
     };
+    const i18n = window.podcastPlayerI18n;
+    playerConfig.language = i18n.normalize(playerConfig.language);
+    i18n.apply(document, playerConfig.language);
+    const t = (key, values) => i18n.translate(key, values);
 
     const STORAGE_KEY = "podcast-player-state-v1";
     const savedState = (() => {
@@ -31,11 +37,17 @@
     const episodes = [
       {
         no: 42,
-        title: "Dlaczego dobre produkty zaczynają się od ograniczeń",
-        description: "O tym, dlaczego ograniczenia pomagają zespołom podejmować lepsze decyzje i budować produkty, które są prostsze w użyciu i łatwiejsze w rozwijaniu.",
-        date: "21 sierpnia 2026",
-        guest: "Anna Kowalska",
-        category: "Produkt",
+         title: {
+           pl: "Dlaczego dobre produkty zaczynają się od ograniczeń",
+           en: "Why Great Products Start with Constraints"
+         },
+         description: {
+           pl: "O tym, dlaczego ograniczenia pomagają zespołom podejmować lepsze decyzje i budować produkty, które są prostsze w użyciu i łatwiejsze w rozwijaniu.",
+           en: "Why constraints help teams make better decisions and build products that are simpler to use and easier to evolve."
+         },
+         date: "2026-08-21",
+         guest: "Anna Kowalska",
+         category: "product",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/librivox.mp3",
          type: "audio/mpeg",
@@ -49,11 +61,17 @@
       },
       {
         no: 41,
-        title: "Interfejs, który nie przeszkadza użytkownikowi",
-        description: "Rozmawiamy o projektowaniu interfejsów, które prowadzą użytkownika bez nadmiaru komunikatów, elementów i decyzji do podjęcia.",
-        date: "14 sierpnia 2026",
-        guest: "Michał Rosiński",
-        category: "Design",
+         title: {
+           pl: "Interfejs, który nie przeszkadza użytkownikowi",
+           en: "An Interface That Stays Out of the User's Way"
+         },
+         description: {
+           pl: "Rozmawiamy o projektowaniu interfejsów, które prowadzą użytkownika bez nadmiaru komunikatów, elementów i decyzji do podjęcia.",
+           en: "A conversation about designing interfaces that guide users without overwhelming them with messages, elements, or decisions."
+         },
+         date: "2026-08-14",
+         guest: "Michał Rosiński",
+         category: "design",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/stereo.mp3",
          type: "audio/mpeg",
@@ -67,11 +85,17 @@
       },
       {
         no: 40,
-        title: "Co naprawdę znaczy „prosty” produkt",
-        description: "Przyglądamy się temu, skąd bierze się prawdziwa prostota produktu i dlaczego usuwanie funkcji bywa trudniejsze niż ich dodawanie.",
-        date: "7 sierpnia 2026",
-        guest: "Julia Wrona",
-        category: "Strategia",
+         title: {
+           pl: "Co naprawdę znaczy „prosty” produkt",
+           en: "What Does a \"Simple\" Product Really Mean"
+         },
+         description: {
+           pl: "Przyglądamy się temu, skąd bierze się prawdziwa prostota produktu i dlaczego usuwanie funkcji bywa trudniejsze niż ich dodawanie.",
+           en: "A look at where true product simplicity comes from and why removing features can be harder than adding them."
+         },
+         date: "2026-08-07",
+         guest: "Julia Wrona",
+         category: "strategy",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/mono.mp3",
          type: "audio/mpeg",
@@ -85,11 +109,17 @@
       },
       {
         no: 39,
-        title: "AI w zespole: mniej demo, więcej procesu",
-        description: "Praktycznie o tym, gdzie AI rzeczywiście pomaga zespołowi, jak włączyć je do codziennego procesu i czego nie warto automatyzować.",
-        date: "31 lipca 2026",
-        guest: "Paweł Domański",
-        category: "AI",
+         title: {
+           pl: "AI w zespole: mniej demo, więcej procesu",
+           en: "AI on the Team: Less Demo, More Process"
+         },
+         description: {
+           pl: "Praktycznie o tym, gdzie AI rzeczywiście pomaga zespołowi, jak włączyć je do codziennego procesu i czego nie warto automatyzować.",
+           en: "A practical look at where AI truly helps teams, how to bring it into daily workflows, and what not to automate."
+         },
+         date: "2026-07-31",
+         guest: "Paweł Domański",
+         category: "ai",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/audio.wav",
          type: "audio/wav",
@@ -103,11 +133,17 @@
       },
       {
         no: 38,
-        title: "Jak podejmować decyzje, gdy danych jest za dużo",
-        description: "O podejmowaniu decyzji w świecie pełnym dashboardów, raportów i metryk oraz o tym, jak rozpoznać dane, które naprawdę mają znaczenie.",
-        date: "24 lipca 2026",
-        guest: "Marta Lis",
-        category: "Praca",
+         title: {
+           pl: "Jak podejmować decyzje, gdy danych jest za dużo",
+           en: "How to Make Decisions When There Is Too Much Data"
+         },
+         description: {
+           pl: "O podejmowaniu decyzji w świecie pełnym dashboardów, raportów i metryk oraz o tym, jak rozpoznać dane, które naprawdę mają znaczenie.",
+           en: "Making decisions in a world full of dashboards, reports, and metrics, and recognizing which data truly matters."
+         },
+         date: "2026-07-24",
+         guest: "Marta Lis",
+         category: "work",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/demo.wav",
          type: "audio/wav",
@@ -121,11 +157,17 @@
       },
       {
         no: 37,
-        title: "Kiedy roadmapa przestaje pomagać",
-        description: "O planowaniu, które zostawia miejsce na zmianę kierunku, i sygnałach pokazujących, że roadmapa zaczęła ograniczać zespół.",
-        date: "17 lipca 2026",
-        guest: "Tomasz Bury",
-        category: "Produkt",
+         title: {
+           pl: "Kiedy roadmapa przestaje pomagać",
+           en: "When a Roadmap Stops Helping"
+         },
+         description: {
+           pl: "O planowaniu, które zostawia miejsce na zmianę kierunku, i sygnałach pokazujących, że roadmapa zaczęła ograniczać zespół.",
+           en: "Planning that leaves room to change direction, and the signals that a roadmap has started to limit the team."
+         },
+         date: "2026-07-17",
+         guest: "Tomasz Bury",
+         category: "product",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/librivox.mp3",
         type: "audio/mpeg",
@@ -139,11 +181,17 @@
       },
       {
         no: 36,
-        title: "Badania bez laboratorium",
-        description: "Jak prowadzić lekkie badania produktu w codziennej pracy i szybciej wychwytywać błędne założenia.",
-        date: "10 lipca 2026",
-        guest: "Karolina Mazur",
-        category: "Research",
+         title: {
+           pl: "Badania bez laboratorium",
+           en: "Research Without a Lab"
+         },
+         description: {
+           pl: "Jak prowadzić lekkie badania produktu w codziennej pracy i szybciej wychwytywać błędne założenia.",
+           en: "How to run lightweight product research in everyday work and spot false assumptions sooner."
+         },
+         date: "2026-07-10",
+         guest: "Karolina Mazur",
+         category: "research",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/stereo.mp3",
         type: "audio/mpeg",
@@ -157,11 +205,17 @@
       },
       {
         no: 35,
-        title: "Dług technologiczny bez dramatów",
-        description: "Praktyczne podejście do długu technologicznego: kiedy go spłacać, jak o nim rozmawiać i czego nie mierzyć.",
-        date: "3 lipca 2026",
-        guest: "Łukasz Cichy",
-        category: "Technologia",
+         title: {
+           pl: "Dług technologiczny bez dramatów",
+           en: "Technical Debt Without the Drama"
+         },
+         description: {
+           pl: "Praktyczne podejście do długu technologicznego: kiedy go spłacać, jak o nim rozmawiać i czego nie mierzyć.",
+           en: "A practical approach to technical debt: when to pay it down, how to discuss it, and what not to measure."
+         },
+         date: "2026-07-03",
+         guest: "Łukasz Cichy",
+         category: "technology",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/mono.mp3",
         type: "audio/mpeg",
@@ -175,11 +229,17 @@
       },
       {
         no: 34,
-        title: "Jak mówić nie dobrym pomysłom",
-        description: "O priorytetach, kosztach alternatywnych i komunikowaniu decyzji bez rozmywania odpowiedzialności.",
-        date: "26 czerwca 2026",
-        guest: "Natalia Serafin",
-        category: "Przywództwo",
+         title: {
+           pl: "Jak mówić nie dobrym pomysłom",
+           en: "How to Say No to Good Ideas"
+         },
+         description: {
+           pl: "O priorytetach, kosztach alternatywnych i komunikowaniu decyzji bez rozmywania odpowiedzialności.",
+           en: "Priorities, opportunity costs, and communicating decisions without blurring accountability."
+         },
+         date: "2026-06-26",
+         guest: "Natalia Serafin",
+         category: "leadership",
         durationLabel: "—:—",
         src: "https://raw.githubusercontent.com/katspaugh/wavesurfer.js/main/examples/audio/audio.wav",
         type: "audio/wav",
@@ -192,6 +252,16 @@
         cover: "linear-gradient(145deg,#171511 0%,#675b3f 54%,#c8bc96 100%)"
       }
     ];
+
+    function getEpisodeContent(ep) {
+      return {
+        title: i18n.localize(ep.title),
+        description: i18n.localize(ep.description),
+        date: i18n.formatDate(ep.date),
+        guest: ep.guest,
+        category: t(`categories.${ep.category}`)
+      };
+    }
 
     const els = {
       podcastShell: document.querySelector(".podcast-shell"),
@@ -232,6 +302,12 @@
       listCount: document.getElementById("listCount")
     };
 
+    els.backBtn.setAttribute("aria-label", t("player.skipBack", { seconds: playerConfig.skipBackSeconds }));
+    els.backBtn.title = t("player.skipBack", { seconds: playerConfig.skipBackSeconds });
+    els.forwardBtn.setAttribute("aria-label", t("player.skipForward", { seconds: playerConfig.skipForwardSeconds }));
+    els.forwardBtn.title = t("player.skipForward", { seconds: playerConfig.skipForwardSeconds });
+    els.wave.style.setProperty("--waveform-error-message", JSON.stringify(t("player.waveformUnavailable")));
+
     els.podcastShell.dataset.showDescriptions = String(playerConfig.showDescriptions);
     els.podcastShell.dataset.showEpisodeList = String(playerConfig.showEpisodeList);
     els.podcastShell.dataset.showEpisodeLoadMore = String(playerConfig.showEpisodeLoadMore);
@@ -260,6 +336,7 @@
     let timeMode = "duration";
     const speeds = playerConfig.playbackSpeeds;
     let speedIndex = Math.max(0, speeds.indexOf(Number(savedState.playbackRate || 1)));
+    els.speedBtn.setAttribute("aria-label", t("player.playbackSpeedValue", { rate: speeds[speedIndex] }));
     let lastVolume = Number.isFinite(savedState.volume) ? savedState.volume : playerConfig.defaultVolume;
     let retrySource = null;
     let currentMediaMode = mediaMode;
@@ -278,7 +355,7 @@
     episodeLoadMore.className = "episode-load-more";
     const loadMoreEpisodesBtn = document.createElement("button");
     loadMoreEpisodesBtn.type = "button";
-    loadMoreEpisodesBtn.textContent = "Zobacz więcej";
+    loadMoreEpisodesBtn.textContent = t("player.loadMore");
     loadMoreEpisodesBtn.setAttribute("aria-controls", "episodeList");
     episodeLoadMore.append(loadMoreEpisodesBtn);
     els.episodeList.parentElement.append(episodeLoadMore);
@@ -386,10 +463,11 @@
 
     function updateMediaSession(ep) {
       if (!("mediaSession" in navigator)) return;
+      const content = getEpisodeContent(ep);
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: ep.title,
-        artist: ep.guest,
-        album: "Rozmowy bez slajdów",
+        title: content.title,
+        artist: content.guest,
+        album: t("player.showTitle"),
         artwork: ep.image ? [{ src: ep.image }] : []
       });
     }
@@ -437,7 +515,9 @@
         : formatTime(duration);
       els.duration.setAttribute(
         "aria-label",
-        timeMode === "remaining" ? `Pozostało ${formatTime(remaining)}` : `Długość odcinka ${formatTime(duration)}`
+        timeMode === "remaining"
+          ? t("player.timeRemaining", { time: formatTime(remaining) })
+          : t("player.episodeDuration", { time: formatTime(duration) })
       );
     }
 
@@ -449,6 +529,7 @@
         `<span class="bar" style="--h:${h};--i:${i}" aria-hidden="true"></span>`
       ).join("");
       els.wave.dataset.waveAnimate = String(animate);
+      els.wave.style.setProperty("--waveform-error-message", JSON.stringify(t("player.waveformUnavailable")));
       els.waveBase.innerHTML = markup;
       els.wavePlayed.innerHTML = markup;
       updateWave(player.duration() ? player.currentTime() / player.duration() : 0);
@@ -608,11 +689,7 @@
       } catch (error) {
         // To dotyczy wyłącznie analizy waveformu.
         // Nie wolno z tego powodu blokować odtwarzania Video.js.
-        console.info(
-          "Waveform niedostępny dla tego źródła. Playback pozostaje aktywny. " +
-          "Dodaj precomputed `peaks` albo włącz CORS na serwerze audio.",
-          error
-        );
+        console.info(t("player.waveformLog"), error);
 
         if (requestId !== waveformRequestId) return;
         els.waveBase.innerHTML = "";
@@ -644,7 +721,10 @@
       els.simpleProgressFill.style.width = pct + "%";
       els.playhead.style.left = pct + "%";
       els.wave.setAttribute("aria-valuenow", Math.round(pct));
-      els.wave.setAttribute("aria-valuetext", `${formatTime(pct * currentDuration)} z ${formatTime(currentDuration)}`);
+      els.wave.setAttribute("aria-valuetext", t("player.timeProgress", {
+        current: formatTime(pct * currentDuration),
+        duration: formatTime(currentDuration)
+      }));
     }
 
     let playbackFrameId = null;
@@ -697,12 +777,13 @@
       const visibleEpisodes = episodes.slice(0, end);
 
       els.listCount.textContent = loadMore && end < episodes.length
-        ? `${end} z ${episodes.length} odcinków`
-        : `${episodes.length} odcinków`;
+        ? t("player.visibleEpisodeCount", { visible: end, total: episodes.length })
+        : t("player.episodeCount", { count: episodes.length });
       episodeLoadMore.hidden = !loadMore || end >= episodes.length;
 
       els.episodeList.replaceChildren(...visibleEpisodes.map((ep, offset) => {
         const i = offset;
+        const content = getEpisodeContent(ep);
         const row = document.createElement("li");
         row.className = `episode-row ${i === currentIndex ? "active" : ""}`;
         if (i >= animateFrom) {
@@ -714,7 +795,7 @@
         const button = document.createElement("button");
         button.className = "episode-row-button";
         button.type = "button";
-        button.setAttribute("aria-label", `Odtwórz odcinek ${ep.no}: ${ep.title}`);
+        button.setAttribute("aria-label", t("player.playEpisode", { number: ep.no, title: content.title }));
         button.addEventListener("click", () => loadEpisode(i, true));
 
         const index = document.createElement("span");
@@ -724,7 +805,7 @@
         const thumbnail = document.createElement("img");
         thumbnail.className = "episode-thumbnail";
         thumbnail.src = ep.image || "";
-        thumbnail.alt = `Miniatura odcinka ${ep.no}: ${ep.title}`;
+        thumbnail.alt = t("player.episodeThumbnail", { number: ep.no, title: content.title });
         thumbnail.loading = "lazy";
         thumbnail.hidden = !playerConfig.showPlaylistThumbnails || !ep.image;
 
@@ -732,20 +813,20 @@
         copy.className = "row-copy";
         const title = document.createElement("p");
         title.className = "row-title";
-        title.textContent = ep.title;
+        title.textContent = content.title;
         const description = document.createElement("p");
         description.className = "row-description";
-        description.textContent = ep.description;
+        description.textContent = content.description;
         const meta = document.createElement("span");
         meta.className = "row-meta";
-        meta.textContent = `${ep.guest} · ${ep.category}`;
+        meta.textContent = `${content.guest} · ${content.category}`;
         copy.append(title, description, meta);
 
         const end = document.createElement("div");
         end.className = "row-end";
         const badge = document.createElement("span");
         badge.className = "now-badge";
-        badge.textContent = "TERAZ";
+        badge.textContent = t("player.now");
         const duration = document.createElement("span");
         duration.textContent = ep.durationLabel;
         end.append(badge, duration);
@@ -773,7 +854,7 @@
       speedIndex = Math.max(0, speeds.indexOf(rate));
       player.playbackRate(rate);
       els.speedBtn.textContent = `${rate}×`;
-      els.speedBtn.setAttribute("aria-label", `Prędkość odtwarzania ${rate} razy`);
+      els.speedBtn.setAttribute("aria-label", t("player.playbackSpeedValue", { rate }));
       saveState();
       closeSpeedMenu();
     }
@@ -794,21 +875,22 @@
     }
 
     function syncMeta(ep) {
+      const content = getEpisodeContent(ep);
       els.coverNo.textContent = ep.no;
       els.cover.style.background = ep.cover;
       els.coverImage.src = ep.image || "";
       els.coverImage.hidden = !ep.image;
-      els.coverImage.alt = ep.image ? `Okładka odcinka ${ep.no}: ${ep.title}` : "";
-      els.episodeKicker.textContent = `Odcinek ${ep.no}`;
-      els.episodeTitle.textContent = ep.title;
-      els.videoTitle.textContent = ep.title;
-      els.episodeTitle.title = ep.title;
-      els.episodeTitle.setAttribute("aria-label", ep.title);
-      els.episodeDescription.textContent = ep.description;
-      els.episodeDescription.title = ep.description;
-      els.episodeDate.textContent = ep.date;
-      els.episodeGuest.textContent = ep.guest;
-      els.episodeCategory.textContent = ep.category;
+      els.coverImage.alt = ep.image ? t("player.episodeCover", { number: ep.no, title: content.title }) : "";
+      els.episodeKicker.textContent = t("player.episode", { number: ep.no });
+      els.episodeTitle.textContent = content.title;
+      els.videoTitle.textContent = content.title;
+      els.episodeTitle.title = content.title;
+      els.episodeTitle.setAttribute("aria-label", content.title);
+      els.episodeDescription.textContent = content.description;
+      els.episodeDescription.title = content.description;
+      els.episodeDate.textContent = content.date;
+      els.episodeGuest.textContent = content.guest;
+      els.episodeCategory.textContent = content.category;
       updateMediaSession(ep);
       updateMediaSwitch();
       scheduleWaveformLoad(ep);
@@ -828,7 +910,7 @@
       saveState();
       const ep = episodes[currentIndex];
 
-      setStatus("loading", "Ładowanie odcinka");
+      setStatus("loading", t("player.loading"));
       syncMeta(ep);
       els.currentTime.textContent = "00:00";
       els.duration.textContent = ep.durationLabel;
@@ -843,8 +925,8 @@
     function togglePlay() {
       if (player.paused()) {
         player.play().catch(error => {
-          console.error("Nie udało się rozpocząć odtwarzania:", error);
-          setStatus("paused", "Nie udało się rozpocząć odtwarzania");
+          console.error(t("player.playError"), error);
+          setStatus("paused", t("player.playError"));
         });
       } else {
         player.pause();
@@ -871,7 +953,7 @@
     }
 
     function updatePlayIcon(isPlaying) {
-      els.playBtn.setAttribute("aria-label", isPlaying ? "Pauza" : "Odtwórz");
+      els.playBtn.setAttribute("aria-label", t(isPlaying ? "player.pause" : "player.play"));
       els.playBtn.innerHTML = isPlaying
         ? `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7V5Zm6 0h4v14h-4V5Z"/></svg>`
         : `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.2v13.6L19 12 8 5.2Z"/></svg>`;
@@ -879,8 +961,9 @@
 
     function syncVolumeUI() {
       const muted = player.muted() || player.volume() === 0;
-      els.muteBtn.setAttribute("aria-label", muted ? "Włącz dźwięk" : "Wycisz");
-      els.muteBtn.title = muted ? "Włącz dźwięk" : "Wycisz";
+      const label = t(muted ? "player.unmute" : "player.mute");
+      els.muteBtn.setAttribute("aria-label", label);
+      els.muteBtn.title = label;
       els.muteBtn.parentElement.dataset.muted = String(muted);
     }
 
@@ -896,26 +979,26 @@
       setupMediaSession();
     });
 
-    player.on("loadstart", () => setStatus("loading", "Ładowanie odcinka"));
+    player.on("loadstart", () => setStatus("loading", t("player.loading")));
     player.on("waiting", () => {
-      setStatus("loading", "Buforowanie");
+      setStatus("loading", t("player.buffering"));
       stopPlaybackAnimation();
     });
     player.on("playing", () => {
-      setStatus("playing", "Odtwarzanie");
+      setStatus("playing", t("player.playing"));
       updatePlayIcon(true);
       startPlaybackAnimation();
       if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing";
     });
     player.on("pause", () => {
-      if (!player.ended()) setStatus("paused", "Wstrzymano");
+      if (!player.ended()) setStatus("paused", t("player.paused"));
       updatePlayIcon(false);
       stopPlaybackAnimation();
       saveState();
       if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused";
     });
     player.on("ended", () => {
-      setStatus("paused", "Odcinek zakończony");
+      setStatus("paused", t("player.ended"));
       updatePlayIcon(false);
       stopPlaybackAnimation();
       saveState();
@@ -925,7 +1008,7 @@
       const err = player.error();
       const code = err?.code ? ` · kod ${err.code}` : "";
       console.error("Video.js media error:", err);
-      setStatus("paused", `Nie udało się wczytać audio${code}`);
+      setStatus("paused", t("player.audioError", { code }));
       updatePlayIcon(false);
       setRetryState(true, episodes[currentIndex]);
     });
@@ -942,7 +1025,7 @@
         resumeAfterSourceChange = false;
         player.play().catch(() => {});
       } else {
-        setStatus("paused", "Gotowy do odtworzenia");
+        setStatus("paused", t("player.ready"));
       }
     });
 
@@ -1004,8 +1087,8 @@
     if (playerConfig.minimal) {
       els.duration.setAttribute("role", "button");
       els.duration.setAttribute("tabindex", "0");
-      els.duration.setAttribute("aria-label", "Zmień sposób wyświetlania czasu");
-      els.duration.title = "Zmień sposób wyświetlania czasu";
+      els.duration.setAttribute("aria-label", t("player.changeTimeDisplay"));
+      els.duration.title = t("player.changeTimeDisplay");
     } else {
       els.duration.removeAttribute("role");
       els.duration.removeAttribute("tabindex");

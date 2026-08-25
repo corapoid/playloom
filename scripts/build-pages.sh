@@ -2,6 +2,7 @@
 set -euo pipefail
 
 version="${1:-}"
+source_ref="${2:-v$version}"
 if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   printf 'Usage: %s VERSION\n' "$0" >&2
   exit 1
@@ -27,10 +28,11 @@ rm -rf "$dist"/* "$dist"/.[!.]* "$dist"/..?*
 
 current_source="$temp_dir/current"
 mkdir -p "$current_source"
-git archive --format=tar "v$version" | tar -x -C "$current_source"
+git archive --format=tar "$source_ref" | tar -x -C "$current_source"
 copy_site "$current_source" "$dist"
 
 mkdir -p "$dist/versions"
+copy_site "$current_source" "$dist/versions/$version"
 cat > "$dist/versions/index.html" <<'HTML'
 <!doctype html>
 <html lang="en">
@@ -48,6 +50,7 @@ HTML
 while IFS= read -r tag; do
   release_version="${tag#v}"
   [[ "$release_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || continue
+  [[ "$release_version" == "$version" ]] && continue
 
   release_source="$temp_dir/$release_version"
   mkdir -p "$release_source"

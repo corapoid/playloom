@@ -1140,14 +1140,14 @@
       object-fit:contain;
     }
     .podcast-shell[data-media-mode="video"] .vjs-control-bar{display:flex}
-    .podcast-shell[data-minimal="false"][data-media-mode="audio"] .now-playing{
+    .podcast-shell[data-layout="hero"][data-minimal="false"][data-media-mode="audio"] .now-playing{
       position:relative;
       align-content:start;
       width:100%;
       max-height:560px;
       aspect-ratio:16 / 9;
     }
-    .podcast-shell[data-minimal="false"][data-media-mode="audio"] .controls{
+    .podcast-shell[data-layout="hero"][data-minimal="false"][data-media-mode="audio"] .controls{
       position:absolute;
       right:0;
       bottom:7px;

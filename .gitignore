@@ -5,3 +5,4 @@
 .opencode/bun.lock
 .opencode/.gitignore
 .DS_Store
+dist/

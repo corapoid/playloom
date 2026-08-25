@@ -18,6 +18,25 @@ Then open:
 
 The playback library and demo media are loaded from external servers, so the player requires internet access.
 
+## GitHub Pages
+
+The repository includes GitHub Actions workflows for validation and versioned GitHub Pages deployments. CI runs on pushes and pull requests. Enable GitHub Pages in the repository settings with **Source: GitHub Actions**.
+
+Releases use SemVer tags with a `v` prefix:
+
+```sh
+git tag v0.0.1
+git push origin main --follow-tags
+```
+
+For each release tag, the workflow publishes the tagged version at the site root and keeps every SemVer tag in the version archive:
+
+- `https://corapoid.github.io/playloom/` - latest deployed version
+- `https://corapoid.github.io/playloom/versions/` - version index
+- `https://corapoid.github.io/playloom/versions/0.0.1/` - a specific version
+
+To release a new version, update `CHANGELOG.md`, commit the changes, create a tag such as `v0.0.2`, and push the commit with its tag. The workflow rebuilds the archive from all available release tags, so previous versions remain available.
+
 ## Configuration
 
 Set `window.podcastPlayerConfig` before loading `js/podcast-player-videojs.js`:
@@ -54,6 +73,9 @@ With `showEpisodeLoadMore: true`, the list initially displays four episodes and 
 │   ├── podcast-player-configurator.js
 │   ├── podcast-player-preview.js
 │   └── podcast-player-videojs.js
+├── scripts/build-pages.sh
+├── .github/workflows/deploy-pages.yml
+├── CHANGELOG.md
 ├── .opencode/skills/site-player-skin/
 ├── podcast-player-configurator.html
 ├── podcast-player-preview.html

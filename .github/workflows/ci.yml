@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate JavaScript
+        run: |
+          node --check js/podcast-player-videojs.js
+          node --check js/podcast-player-configurator.js
+          node --check js/podcast-player-preview.js
+
+      - name: Validate Pages build
+        run: |
+          set -euo pipefail
+          version="0.0.${GITHUB_RUN_ID}"
+          git tag "v$version" HEAD
+          cleanup() {
+            git tag -d "v$version" >/dev/null
+            rm -rf dist
+          }
+          trap cleanup EXIT
+          bash scripts/build-pages.sh "$version"
+          test -f dist/index.html
+          test -f dist/versions/index.html
+          test -f "dist/versions/$version/index.html"

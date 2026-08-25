@@ -1,92 +1,11 @@
 # Podcast Player
 
-A responsive podcast player supporting audio, video, waveforms, incremental episode loading, persisted playback state, and interchangeable skins.
+Podcast Player is a responsive, configurable media player for podcast content. It supports audio and video playback, waveform visualization, episode playlists, playback state persistence, and responsive desktop and mobile layouts.
 
-## Running Locally
+The project includes a visual configurator for adjusting player layout, skins, themes, content options, waveform behavior, and language. Every configuration can be represented as a shareable URL and as a player configuration object.
 
-The project requires no dependency installation. Start a local server from the project directory:
+The interface supports Polish and English localization, including dynamic playback states, accessibility labels, episode metadata, dates, and sample content.
 
-```sh
-python3 -m http.server 8080
-```
+The player uses interchangeable visual skins, including default, Onet, WP, Spotify, YouTube, and The Telegraph-inspired variants. The skin system keeps visual styling separate from playback behavior.
 
-Then open:
-
-- `http://localhost:8080/podcast-player-videojs.html` - player
-- `http://localhost:8080/podcast-player-configurator.html` - configurator with desktop and mobile previews
-- `http://localhost:8080/podcast-player-preview.html` - standalone preview controlled through URL parameters
-
-The playback library and demo media are loaded from external servers, so the player requires internet access.
-
-## GitHub Pages
-
-The repository includes GitHub Actions workflows for validation and versioned GitHub Pages deployments. CI runs on pushes and pull requests. Enable GitHub Pages in the repository settings with **Source: GitHub Actions**.
-
-Releases use SemVer tags with a `v` prefix:
-
-```sh
-git tag v0.0.1
-git push origin main --follow-tags
-```
-
-For each release tag, the workflow publishes the tagged version at the site root and keeps every SemVer tag in the version archive:
-
-- `https://corapoid.github.io/playloom/` - latest deployed version
-- `https://corapoid.github.io/playloom/versions/` - version index
-- `https://corapoid.github.io/playloom/versions/0.0.1/` - a specific version
-
-To release a new version, update `CHANGELOG.md`, commit the changes, create a tag such as `v0.0.2`, and push the commit with its tag. The workflow rebuilds the archive from all available release tags, so previous versions remain available.
-
-## Configuration
-
-Set `window.podcastPlayerConfig` before loading `js/podcast-player-videojs.js`. Load `js/i18n.js` first when using the player outside the included HTML pages:
-
-```html
-<script>
-  window.podcastPlayerConfig = {
-    skin: "default",
-    language: "pl",
-    mode: "audio",
-    allowModeSwitch: true,
-    showEpisodeList: true,
-    showEpisodeLoadMore: true,
-    showPlaylistThumbnails: true,
-    compactPlaylist: true,
-    showDescriptions: false,
-    showWaveform: true,
-    alwaysShowWaveform: true
-  };
-</script>
-<script src="js/i18n.js"></script>
-<script src="js/podcast-player-videojs.js"></script>
-```
-
-With `showEpisodeLoadMore: true`, the list initially displays four episodes and reveals additional batches through the load-more button.
-
-## Project Structure
-
-```text
-.
-├── css/
-│   ├── podcast-player-configurator.css
-│   ├── podcast-player-videojs.css
-│   └── skins/
-├── js/
-│   ├── i18n.js
-│   ├── podcast-player-configurator.js
-│   ├── podcast-player-preview.js
-│   └── podcast-player-videojs.js
-├── scripts/build-pages.sh
-├── .github/workflows/deploy-pages.yml
-├── CHANGELOG.md
-├── .opencode/skills/site-player-skin/
-├── podcast-player-configurator.html
-├── podcast-player-preview.html
-└── podcast-player-videojs.html
-```
-
-## Skin Generation
-
-The project includes the `site-player-skin` OpenCode skill. Given a website URL, it analyzes colors, typography, spacing, components, and responsive behavior, then creates a matching skin in `css/skins/`.
-
-Restart OpenCode after adding or changing the skill so the configuration is reloaded.
+The repository contains three related views: the configurable player, the desktop and mobile configurator preview, and a standalone player preview driven by configuration state.

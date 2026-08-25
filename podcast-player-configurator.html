@@ -100,6 +100,19 @@
             </select>
           </label>
 
+          <label class="select-field">
+            <span data-i18n="config.playbackMode">Tryb odtwarzania</span>
+            <select name="mode">
+              <option value="audio" data-i18n="config.audioMode">Audio</option>
+              <option value="video" data-i18n="config.videoMode">Video</option>
+            </select>
+          </label>
+
+          <label class="toggle-field">
+            <span><strong data-i18n="config.modeSwitch">Przełącznik Audio/Video</strong><small data-i18n="config.modeSwitchHint">Pozwala zmienić tryb bezpośrednio w playerze.</small></span>
+            <input type="checkbox" name="allowModeSwitch">
+          </label>
+
           <label class="toggle-field">
             <span><strong data-i18n="config.minimal">Tryb minimalny</strong><small data-i18n="config.minimalHint">Kompaktowy player bez dodatkowych elementów.</small></span>
             <input type="checkbox" name="minimal">
@@ -109,6 +122,12 @@
         <fieldset>
           <legend data-i18n="config.content">Zawartość</legend>
 
+          <label class="select-field">
+            <span data-i18n="config.feedUrl">URL feedu podcastu</span>
+            <input type="url" name="feedUrl" data-i18n-placeholder="config.feedUrlPlaceholder" placeholder="https://example.com/feed.xml">
+            <small data-i18n="config.feedUrlHint">Pozostaw puste, aby użyć danych demonstracyjnych. Feed musi zezwalać na CORS.</small>
+          </label>
+
           <label class="toggle-field">
             <span><strong data-i18n="config.episodeDescription">Opis odcinka</strong><small data-i18n="config.episodeDescriptionHint">Pokazuje opis pod metadanymi.</small></span>
             <input type="checkbox" name="showDescriptions">
@@ -117,6 +136,11 @@
           <label class="toggle-field">
             <span><strong data-i18n="config.episodeList">Lista odcinków</strong><small data-i18n="config.episodeListHint">Wyświetla playlistę pod playerem.</small></span>
             <input type="checkbox" name="showEpisodeList">
+          </label>
+
+          <label class="toggle-field dependent-list">
+            <span><strong data-i18n="config.seasonFilter">Filtr sezonów</strong><small id="seasonFilterHint" data-i18n="config.seasonFilterHint">Pokazuje wybór sezonu, gdy feed zawiera ich więcej niż jeden.</small></span>
+            <input type="checkbox" name="showSeasonFilter">
           </label>
 
           <label class="toggle-field dependent-list">
@@ -139,7 +163,7 @@
           <legend data-i18n="config.timeline">Linia czasu</legend>
 
           <label class="toggle-field">
-            <span><strong data-i18n="config.waveform">Waveform</strong><small data-i18n="config.waveformHint">Fala dźwiękowa zamiast prostego paska.</small></span>
+            <span><strong data-i18n="config.waveform">Waveform</strong><small id="waveformHint" data-i18n="config.waveformHint">Fala dźwiękowa zamiast prostego paska.</small></span>
             <input type="checkbox" name="showWaveform">
           </label>
 

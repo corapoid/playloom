@@ -1,6 +1,6 @@
 # Podcast Player
 
-Podcast Player is a responsive, configurable media player for podcast content. It supports audio and video playback, waveform visualization, episode playlists, playback state persistence, and responsive desktop and mobile layouts.
+Podcast Player is a responsive, configurable media player for podcast content. It supports audio and video playback, RSS 2.0 podcast feeds, season filtering, waveform visualization, episode playlists, playback state persistence, and responsive desktop and mobile layouts.
 
 The project includes a visual configurator for adjusting player layout, skins, themes, content options, waveform behavior, and language. Every configuration can be represented as a shareable URL and as a player configuration object.
 

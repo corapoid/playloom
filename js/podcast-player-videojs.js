@@ -1,8 +1,11 @@
+(async () => {
     const queryLanguage = new URLSearchParams(location.search).get("language");
     const playerConfig = {
       language: queryLanguage || "pl",
+      feedUrl: "",
       showDescriptions: false,
       showEpisodeList: true,
+      showSeasonFilter: false,
       showEpisodeLoadMore: true,
       showPlaylistThumbnails: true,
       compactPlaylist: true,
@@ -26,15 +29,7 @@
     i18n.apply(document, playerConfig.language);
     const t = (key, values) => i18n.translate(key, values);
 
-    const STORAGE_KEY = "podcast-player-state-v1";
-    const savedState = (() => {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-      catch { return {}; }
-    })();
-
-    const mediaMode = playerConfig.mode === "video" ? "video" : "audio";
-
-    const episodes = [
+    const defaultEpisodes = [
       {
         no: 42,
          title: {
@@ -253,17 +248,150 @@
       }
     ];
 
+    const directChild = (node, name, namespace) => [...(node?.children || [])].find(element =>
+      element.localName === name && (!namespace || element.namespaceURI?.includes(namespace))
+    );
+    const childText = (node, name, namespace) => directChild(node, name, namespace)?.textContent.trim() || "";
+
+    function plainText(value) {
+      const body = new DOMParser().parseFromString(`<body>${value || ""}</body>`, "text/html").body;
+      return body.textContent.replace(/\s+/g, " ").trim();
+    }
+
+    function durationLabel(value) {
+      const duration = String(value || "").trim();
+      if (/^\d{1,3}:\d{2}(?::\d{2})?$/.test(duration)) return duration;
+      const seconds = Number(duration);
+      if (!Number.isFinite(seconds) || seconds < 0) return "—:—";
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainder = Math.floor(seconds % 60);
+      return hours
+        ? `${hours}:${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`
+        : `${minutes}:${String(remainder).padStart(2, "0")}`;
+    }
+
+    function feedError(code) {
+      return Object.assign(new Error(code), { code });
+    }
+
+    function inlinePeaks(item) {
+      const element = [...item.children].find(child => ["waveform", "peaks"].includes(child.localName));
+      if (!element) return null;
+      const value = element.getAttribute("peaks") || element.textContent;
+      let peaks;
+      try { peaks = JSON.parse(value); }
+      catch { peaks = value.split(/[\s,]+/); }
+      const normalized = Array.isArray(peaks) ? peaks.map(Number).filter(Number.isFinite) : [];
+      return normalized.length > 1 ? normalized : null;
+    }
+
+    async function loadPodcastFeed(feedUrl) {
+      let url;
+      try { url = new URL(feedUrl); }
+      catch { throw feedError("invalidUrl"); }
+      if (!["http:", "https:"].includes(url.protocol)) throw feedError("invalidUrl");
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+      let response;
+      try {
+        response = await fetch(url, { signal: controller.signal });
+      } catch (error) {
+        throw feedError(error.name === "AbortError" ? "timeout" : "network");
+      } finally {
+        clearTimeout(timeout);
+      }
+      if (!response.ok) throw feedError("http");
+
+      const declaredSize = Number(response.headers.get("content-length"));
+      if (Number.isFinite(declaredSize) && declaredSize > 5_000_000) throw feedError("tooLarge");
+      const xml = await response.text();
+      if (xml.length > 5_000_000) throw feedError("tooLarge");
+
+      const document = new DOMParser().parseFromString(xml, "application/xml");
+      if (document.querySelector("parsererror")) throw feedError("invalidXml");
+      const channel = document.querySelector("rss > channel, channel");
+      if (!channel) throw feedError("invalidXml");
+
+      const channelImage = directChild(channel, "image", "itunes")?.getAttribute("href")
+        || childText(directChild(channel, "image"), "url");
+      const channelCategory = directChild(channel, "category", "itunes")?.getAttribute("text")
+        || childText(channel, "category");
+      const channelAuthor = childText(channel, "author", "itunes") || childText(channel, "author");
+      const items = [...channel.children].filter(element => element.localName === "item");
+      const parsedEpisodes = items.map((item, index) => {
+        const enclosure = directChild(item, "enclosure");
+        const src = enclosure?.getAttribute("url")?.trim();
+        const type = enclosure?.getAttribute("type")?.trim() || "audio/mpeg";
+        if (!src || (!type.startsWith("audio/") && enclosure?.getAttribute("type"))) return null;
+
+        const published = new Date(childText(item, "pubDate"));
+        const episodeNumber = Number(childText(item, "episode", "itunes"));
+        const itemCategory = directChild(item, "category")?.getAttribute("text")
+          || childText(item, "category")
+          || channelCategory;
+        const image = directChild(item, "image", "itunes")?.getAttribute("href")
+          || directChild(item, "thumbnail", "search.yahoo.com")?.getAttribute("url")
+          || channelImage;
+
+        return {
+          id: childText(item, "guid") || src,
+          no: Number.isInteger(episodeNumber) && episodeNumber > 0 ? episodeNumber : null,
+          listNo: index + 1,
+          title: childText(item, "title", "itunes") || childText(item, "title"),
+          description: plainText(childText(item, "summary", "itunes") || childText(item, "description")),
+          date: Number.isNaN(published.getTime()) ? "" : published.toISOString().slice(0, 10),
+          guest: childText(item, "author", "itunes") || childText(item, "author") || channelAuthor,
+          category: itemCategory,
+          season: childText(item, "season", "itunes"),
+          durationLabel: durationLabel(childText(item, "duration", "itunes")),
+          src,
+          type,
+          peaks: inlinePeaks(item),
+          image,
+          cover: "linear-gradient(145deg,#111 0%,#353531 55%,#8d8d84 100%)"
+        };
+      }).filter(episode => episode?.title);
+
+      if (!parsedEpisodes.length) throw feedError("empty");
+      return {
+        podcast: {
+          title: childText(channel, "title") || new URL(feedUrl).hostname,
+          author: channelAuthor,
+          category: channelCategory,
+          image: channelImage,
+          language: childText(channel, "language")
+        },
+        episodes: parsedEpisodes
+      };
+    }
+
+    let episodes = defaultEpisodes;
+    let podcast = {
+      title: t("player.showTitle"),
+      author: "",
+      category: "",
+      image: ""
+    };
+
     function getEpisodeContent(ep) {
+      const categoryKey = `categories.${ep.category}`;
+      const translatedCategory = t(categoryKey);
       return {
         title: i18n.localize(ep.title),
         description: i18n.localize(ep.description),
-        date: i18n.formatDate(ep.date),
+        date: ep.date ? i18n.formatDate(ep.date) : "",
         guest: ep.guest,
-        category: t(`categories.${ep.category}`)
+        category: translatedCategory === categoryKey ? ep.category : translatedCategory
       };
     }
 
     const els = {
+      pageTitle: document.querySelector("title"),
+      showTitle: document.querySelector("h1"),
+      eyebrow: document.querySelector(".eyebrow"),
+      coverBrand: document.querySelector(".cover-brand"),
       podcastShell: document.querySelector(".podcast-shell"),
       nowPlaying: document.getElementById("nowPlaying"),
       cover: document.getElementById("cover"),
@@ -280,6 +408,7 @@
       episodeKicker: document.getElementById("episodeKicker"),
       episodeTitle: document.getElementById("episodeTitle"),
       episodeDescription: document.getElementById("episodeDescription"),
+      episodeMeta: document.querySelector(".episode-meta"),
       episodeDate: document.getElementById("episodeDate"),
       episodeGuest: document.getElementById("episodeGuest"),
       episodeCategory: document.getElementById("episodeCategory"),
@@ -298,9 +427,70 @@
       speedMenu: document.getElementById("speedMenu"),
       muteBtn: document.getElementById("muteBtn"),
       volumeSlider: document.getElementById("volumeSlider"),
+      controls: document.querySelector(".controls"),
+      timeline: document.querySelector(".timeline-row"),
       episodeList: document.getElementById("episodeList"),
       listCount: document.getElementById("listCount")
     };
+
+    const feedUrl = String(playerConfig.feedUrl || "").trim();
+    if (feedUrl) {
+      els.status.dataset.state = "loading";
+      els.statusText.dataset.i18n = "player.feedLoading";
+      els.statusText.textContent = t("player.feedLoading");
+      try {
+        const feed = await loadPodcastFeed(feedUrl);
+        podcast = feed.podcast;
+        episodes = feed.episodes;
+        els.podcastShell.dataset.contentSource = "rss";
+        els.pageTitle.removeAttribute("data-i18n");
+        els.showTitle.removeAttribute("data-i18n");
+        els.coverBrand.removeAttribute("data-i18n");
+        els.eyebrow.removeAttribute("data-i18n");
+        els.pageTitle.textContent = podcast.title;
+        els.showTitle.textContent = podcast.title;
+        els.coverBrand.textContent = podcast.title;
+        els.eyebrow.textContent = podcast.author || podcast.category || t("player.feedEyebrow");
+        els.statusText.dataset.i18n = "player.ready";
+      } catch (error) {
+        const errorKey = `player.feedErrors.${error.code || "network"}`;
+        els.status.dataset.state = "paused";
+        els.statusText.dataset.i18n = "player.feedLoadFailed";
+        els.statusText.textContent = t("player.feedLoadFailed");
+        els.episodeTitle.textContent = t("player.feedErrorTitle");
+        els.episodeDescription.textContent = t(errorKey);
+        els.episodeMeta.hidden = true;
+        els.controls.hidden = true;
+        els.timeline.hidden = true;
+        els.mediaSwitch.hidden = true;
+        els.podcastShell.dataset.showEpisodeList = "false";
+        els.retryBtn.dataset.i18n = "player.feedRetry";
+        els.retryBtn.textContent = t("player.feedRetry");
+        els.retryBtn.hidden = false;
+        els.retryBtn.addEventListener("click", () => location.reload());
+        console.error(t(errorKey), error);
+        return;
+      }
+    }
+
+    const supportsVideo = episodes.some(episode => episode.video);
+    const seasons = [...new Set(episodes.map(episode => episode.season).filter(Boolean))]
+      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+    const showSeasonFilter = Boolean(playerConfig.showSeasonFilter && seasons.length > 1);
+    const supportsFeedWaveform = !feedUrl || episodes.every(episode => Array.isArray(episode.peaks) && episode.peaks.length > 1);
+    if (!supportsFeedWaveform) {
+      playerConfig.showWaveform = false;
+      playerConfig.alwaysShowWaveform = false;
+    }
+    const mediaMode = playerConfig.mode === "video" && supportsVideo ? "video" : "audio";
+    const allowModeSwitch = Boolean(playerConfig.allowModeSwitch && supportsVideo);
+    const STORAGE_KEY = feedUrl
+      ? `podcast-player-state-v1:${encodeURIComponent(feedUrl)}`
+      : "podcast-player-state-v1";
+    const savedState = (() => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch { return {}; }
+    })();
 
     els.backBtn.setAttribute("aria-label", t("player.skipBack", { seconds: playerConfig.skipBackSeconds }));
     els.backBtn.title = t("player.skipBack", { seconds: playerConfig.skipBackSeconds });
@@ -310,15 +500,17 @@
 
     els.podcastShell.dataset.showDescriptions = String(playerConfig.showDescriptions);
     els.podcastShell.dataset.showEpisodeList = String(playerConfig.showEpisodeList);
+    els.podcastShell.dataset.showSeasonFilter = String(showSeasonFilter);
     els.podcastShell.dataset.showEpisodeLoadMore = String(playerConfig.showEpisodeLoadMore);
     els.podcastShell.dataset.showPlaylistThumbnails = String(playerConfig.showPlaylistThumbnails);
     els.podcastShell.dataset.compactPlaylist = String(playerConfig.compactPlaylist);
     els.podcastShell.dataset.showWaveform = String(playerConfig.showWaveform && !playerConfig.minimal);
     els.podcastShell.dataset.alwaysShowWaveform = String(playerConfig.alwaysShowWaveform && !playerConfig.minimal);
     els.podcastShell.dataset.minimal = String(playerConfig.minimal);
+    els.podcastShell.dataset.allowModeSwitch = String(allowModeSwitch);
     els.podcastShell.dataset.layout = playerConfig.layout === "hero" ? "hero" : "default";
     els.podcastShell.dataset.mediaMode = mediaMode;
-    els.mediaSwitch.hidden = !playerConfig.allowModeSwitch;
+    els.mediaSwitch.hidden = !allowModeSwitch;
     els.podcastShell.dataset.skin = ["default", "onet", "wp", "spotify", "youtube", "telegraph"].includes(playerConfig.skin)
       ? playerConfig.skin
       : "default";
@@ -328,8 +520,11 @@
       }
     });
 
-    let currentIndex = Number.isInteger(savedState.currentIndex) && savedState.currentIndex >= 0 && savedState.currentIndex < episodes.length
-      ? savedState.currentIndex
+    const savedEpisodeIndex = savedState.episodeId
+      ? episodes.findIndex(episode => episode.id === savedState.episodeId)
+      : savedState.currentIndex;
+    let currentIndex = Number.isInteger(savedEpisodeIndex) && savedEpisodeIndex >= 0 && savedEpisodeIndex < episodes.length
+      ? savedEpisodeIndex
       : 0;
     let resumeAfterSourceChange = false;
     let currentDuration = 0;
@@ -360,6 +555,14 @@
     episodeLoadMore.append(loadMoreEpisodesBtn);
     els.episodeList.parentElement.append(episodeLoadMore);
 
+    let selectedSeason = "all";
+    const seasonSelect = document.createElement("select");
+    seasonSelect.className = "season-select";
+    seasonSelect.setAttribute("aria-label", t("player.seasonFilter"));
+    seasonSelect.append(new Option(t("player.allSeasons"), "all"));
+    seasons.forEach(season => seasonSelect.append(new Option(t("player.season", { season }), season)));
+    if (showSeasonFilter) els.listCount.before(seasonSelect);
+
     const player = videojs("podcast-engine", {
       controls: false,
       preload: "metadata",
@@ -379,7 +582,7 @@
 
     function placeMediaSwitch() {
       const useMobileSlot = mobileViewport.matches;
-      mobileMediaSwitchSlot.hidden = !useMobileSlot || !playerConfig.allowModeSwitch;
+      mobileMediaSwitchSlot.hidden = !useMobileSlot || !allowModeSwitch;
       if (useMobileSlot) mobileMediaSwitchSlot.append(els.mediaSwitch);
       else if (currentMediaMode === "video") player.controlBar.el().prepend(els.mediaSwitch);
       else els.controlsLeft.append(els.mediaSwitch);
@@ -413,7 +616,7 @@
     }
 
     function switchMediaMode(mode) {
-      if (!playerConfig.allowModeSwitch || mode === currentMediaMode) return;
+      if (!allowModeSwitch || mode === currentMediaMode) return;
       const source = getMediaSource(episodes[currentIndex], mode);
       if (!source) return;
       const position = Number(player.currentTime()) || 0;
@@ -453,6 +656,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           currentIndex,
+          episodeId: episodes[currentIndex].id,
           currentTime: Number(player.currentTime()) || 0,
           volume: player.volume(),
           muted: player.muted(),
@@ -467,7 +671,7 @@
       navigator.mediaSession.metadata = new MediaMetadata({
         title: content.title,
         artist: content.guest,
-        album: t("player.showTitle"),
+        album: podcast.title,
         artwork: ep.image ? [{ src: ep.image }] : []
       });
     }
@@ -773,39 +977,49 @@
 
     function renderList(animateFrom = Infinity) {
       const loadMore = playerConfig.showEpisodeList && playerConfig.showEpisodeLoadMore;
-      const end = loadMore ? Math.min(visibleEpisodeCount, episodes.length) : episodes.length;
-      const visibleEpisodes = episodes.slice(0, end);
+      const filteredEpisodes = episodes
+        .map((episode, index) => ({ episode, index }))
+        .filter(({ episode }) => selectedSeason === "all" || episode.season === selectedSeason);
+      if (showSeasonFilter) {
+        filteredEpisodes.sort((a, b) => selectedSeason === "all"
+          ? b.episode.date.localeCompare(a.episode.date) || b.episode.listNo - a.episode.listNo
+          : (a.episode.no ?? Infinity) - (b.episode.no ?? Infinity)
+            || a.episode.date.localeCompare(b.episode.date)
+            || a.episode.listNo - b.episode.listNo);
+      }
+      const end = loadMore ? Math.min(visibleEpisodeCount, filteredEpisodes.length) : filteredEpisodes.length;
+      const visibleEpisodes = filteredEpisodes.slice(0, end);
 
-      els.listCount.textContent = loadMore && end < episodes.length
-        ? t("player.visibleEpisodeCount", { visible: end, total: episodes.length })
-        : t("player.episodeCount", { count: episodes.length });
-      episodeLoadMore.hidden = !loadMore || end >= episodes.length;
+      els.listCount.textContent = loadMore && end < filteredEpisodes.length
+        ? t("player.visibleEpisodeCount", { visible: end, total: filteredEpisodes.length })
+        : t("player.episodeCount", { count: filteredEpisodes.length });
+      episodeLoadMore.hidden = !loadMore || end >= filteredEpisodes.length;
 
-      els.episodeList.replaceChildren(...visibleEpisodes.map((ep, offset) => {
-        const i = offset;
+      els.episodeList.replaceChildren(...visibleEpisodes.map(({ episode: ep, index: i }, offset) => {
+        const displayNumber = ep.no ?? ep.listNo ?? i + 1;
         const content = getEpisodeContent(ep);
         const row = document.createElement("li");
         row.className = `episode-row ${i === currentIndex ? "active" : ""}`;
-        if (i >= animateFrom) {
+        if (offset >= animateFrom) {
           row.classList.add("episode-row-reveal");
-          row.style.setProperty("--reveal-index", i - animateFrom);
+          row.style.setProperty("--reveal-index", offset - animateFrom);
         }
         row.setAttribute("aria-current", i === currentIndex ? "true" : "false");
 
         const button = document.createElement("button");
         button.className = "episode-row-button";
         button.type = "button";
-        button.setAttribute("aria-label", t("player.playEpisode", { number: ep.no, title: content.title }));
+        button.setAttribute("aria-label", t("player.playEpisode", { number: displayNumber, title: content.title }));
         button.addEventListener("click", () => loadEpisode(i, true));
 
         const index = document.createElement("span");
         index.className = "episode-index";
-        index.textContent = String(ep.no).padStart(2, "0");
+        index.textContent = String(displayNumber).padStart(2, "0");
 
         const thumbnail = document.createElement("img");
         thumbnail.className = "episode-thumbnail";
         thumbnail.src = ep.image || "";
-        thumbnail.alt = t("player.episodeThumbnail", { number: ep.no, title: content.title });
+        thumbnail.alt = t("player.episodeThumbnail", { number: displayNumber, title: content.title });
         thumbnail.loading = "lazy";
         thumbnail.hidden = !playerConfig.showPlaylistThumbnails || !ep.image;
 
@@ -819,7 +1033,7 @@
         description.textContent = content.description;
         const meta = document.createElement("span");
         meta.className = "row-meta";
-        meta.textContent = `${content.guest} · ${content.category}`;
+        meta.textContent = [content.guest, content.category].filter(Boolean).join(" · ");
         copy.append(title, description, meta);
 
         const end = document.createElement("div");
@@ -836,6 +1050,13 @@
         return row;
       }));
     }
+
+    seasonSelect.addEventListener("change", () => {
+      selectedSeason = seasonSelect.value;
+      visibleEpisodeCount = playerConfig.showEpisodeLoadMore ? episodeBatchSize : episodes.length;
+      renderList();
+      els.episodeList.querySelector("button")?.focus();
+    });
 
     loadMoreEpisodesBtn.addEventListener("click", () => {
       const firstNewIndex = visibleEpisodeCount;
@@ -876,12 +1097,14 @@
 
     function syncMeta(ep) {
       const content = getEpisodeContent(ep);
-      els.coverNo.textContent = ep.no;
+      els.coverNo.textContent = ep.no || "";
+      els.coverNo.hidden = !ep.no;
       els.cover.style.background = ep.cover;
       els.coverImage.src = ep.image || "";
       els.coverImage.hidden = !ep.image;
-      els.coverImage.alt = ep.image ? t("player.episodeCover", { number: ep.no, title: content.title }) : "";
-      els.episodeKicker.textContent = t("player.episode", { number: ep.no });
+      els.coverImage.alt = ep.image ? content.title : "";
+      els.episodeKicker.textContent = ep.no ? t("player.episode", { number: ep.no }) : "";
+      els.episodeKicker.hidden = !ep.no;
       els.episodeTitle.textContent = content.title;
       els.videoTitle.textContent = content.title;
       els.episodeTitle.title = content.title;
@@ -889,8 +1112,11 @@
       els.episodeDescription.textContent = content.description;
       els.episodeDescription.title = content.description;
       els.episodeDate.textContent = content.date;
+      els.episodeDate.hidden = !content.date;
       els.episodeGuest.textContent = content.guest;
+      els.episodeGuest.hidden = !content.guest;
       els.episodeCategory.textContent = content.category;
+      els.episodeCategory.hidden = !content.category;
       updateMediaSession(ep);
       updateMediaSwitch();
       scheduleWaveformLoad(ep);
@@ -961,10 +1187,13 @@
 
     function syncVolumeUI() {
       const muted = player.muted() || player.volume() === 0;
+      const volume = player.volume();
       const label = t(muted ? "player.unmute" : "player.mute");
       els.muteBtn.setAttribute("aria-label", label);
       els.muteBtn.title = label;
       els.muteBtn.parentElement.dataset.muted = String(muted);
+      els.volumeSlider.value = volume;
+      els.volumeSlider.style.setProperty("--volume-level", `${volume * 100}%`);
     }
 
     player.ready(() => {
@@ -1231,3 +1460,4 @@
         togglePlay();
       }
     });
+})();

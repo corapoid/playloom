@@ -1,19 +1,25 @@
 (() => {
   const params = new URLSearchParams(location.search);
   const language = window.podcastPlayerI18n.normalize(params.get("language"));
-  const config = { language };
+  const config = {
+    language,
+    feedUrl: params.get("feedUrl")?.trim() || ""
+  };
   const booleans = [
     "minimal",
+    "allowModeSwitch",
     "showWaveform",
     "alwaysShowWaveform",
     "showDescriptions",
     "showEpisodeList",
+    "showSeasonFilter",
     "showEpisodeLoadMore",
     "showPlaylistThumbnails",
     "compactPlaylist"
   ];
 
   if (["default", "hero"].includes(params.get("layout"))) config.layout = params.get("layout");
+  if (["audio", "video"].includes(params.get("mode"))) config.mode = params.get("mode");
   if (["default", "onet", "wp", "spotify", "youtube", "telegraph"].includes(params.get("skin"))) config.skin = params.get("skin");
   booleans.forEach(key => {
     if (params.has(key)) config[key] = params.get(key) === "true";

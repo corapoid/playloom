@@ -24,6 +24,16 @@
   background:var(--list-bg);
 }
 .podcast-shell[data-skin="default"][data-media-mode="audio"] .engine-wrap{display:none}
+.podcast-shell[data-skin="default"][data-allow-mode-switch="false"][data-show-episode-list="true"]{gap:0}
+.podcast-shell[data-skin="default"][data-allow-mode-switch="false"][data-show-episode-list="true"][data-media-mode="audio"] .now-playing,
+.podcast-shell[data-skin="default"][data-allow-mode-switch="false"][data-show-episode-list="true"][data-media-mode="video"] .engine-wrap{
+  border-bottom-right-radius:0;
+  border-bottom-left-radius:0;
+}
+.podcast-shell[data-skin="default"][data-allow-mode-switch="false"][data-show-episode-list="true"] .episode-list{
+  border-top-left-radius:0;
+  border-top-right-radius:0;
+}
 
 @media (max-width:620px){
   .podcast-shell[data-skin="default"] .now-playing,
